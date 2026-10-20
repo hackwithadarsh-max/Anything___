@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>AnyThing - Social Media Downloader Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #e8e8f0 0%, #d8d8e8 40%, #c8c8d8 100%);
+    min-height: 100vh;
+    padding: 0;
+    color-scheme: light;
+  }
+
+  .app {
+    width: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, #f0f0f8 0%, #e0e0ec 100%);
+    border-radius: 0;
+    padding: 20px 16px 40px;
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .logo {
+    font-size: 26px;
+    font-weight: 900;
+    color: #222;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .logo:hover { opacity: 0.8; }
+  .logo:active { transform: scale(0.98); }
+
+  .logo span { color: #d4a017; }
+
+  .share-btn, .night-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+    transition: 0.2s;
+    padding: 6px;
+    border-radius: 30px;
+  }
+  .share-btn:hover, .night-toggle:hover { background: rgba(0,0,0,0.07); }
+
+  /* Category Tabs */
+  .categories-wrapper {
+    background: white;
+    border-radius: 20px;
+    padding: 14px 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+
+  .categories {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .categories::-webkit-scrollbar { display: none; }
+
+  .cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    min-width: 50px;
+    flex: 1;
+    transition: transform 0.2s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-item:hover { transform: translateY(-2px); }
+  .cat-item:active { transform: scale(0.95); }
+  .cat-item.active .cat-icon {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transform: scale(1.08);
+  }
+  .cat-item.active .cat-label { color: #222; }
+
+  .cat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .cat-icon svg { width: 21px; height: 21px; }
+
+  .cat-reels   { background: linear-gradient(135deg, #ffe0d0, #ffc8b0); }
+  .cat-video   { background: linear-gradient(135deg, #e8d8ff, #d0b8f8); }
+  .cat-audio   { background: linear-gradient(135deg, #d0f0e0, #b0e0c8); }
+  .cat-photo   { background: linear-gradient(135deg, #d0e8ff, #b0d0f0); }
+  .cat-stories { background: linear-gradient(135deg, #ffe8d0, #ffd0a0); }
+  .cat-fb      { background: linear-gradient(135deg, #dde0ff, #c0c8f8); }
+
+  .cat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    text-align: center;
+    transition: color 0.2s;
+  }
+
+  /* Main Content */
+  .main-content { padding: 0 4px; }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #111;
+    margin-bottom: 5px;
+    transition: all 0.3s;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+
+  /* Input Box */
+  .input-box {
+    background: white;
+    border-radius: 16px;
+    padding: 5px 5px 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 18px;
+    transition: box-shadow 0.2s;
+  }
+  .input-box:focus-within { box-shadow: 0 4px 24px rgba(59,130,246,0.18); }
+
+  .input-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #333;
+    background: transparent;
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  .paste-btn, .preview-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .paste-btn {
+    background: #f0f0f8;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .paste-btn:hover { background: #e4e4f0; }
+  .paste-btn:active { transform: scale(0.96); }
+
+  .preview-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  }
+  .preview-btn:hover { transform: scale(1.03); box-shadow: 0 6px 18px rgba(37,99,235,0.4); }
+  .preview-btn:active { transform: scale(0.97); }
+  .preview-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ===== PREVIEW AREA ===== */
+  .preview-area {
+    display: none;
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    animation: fadeIn 0.35s ease;
+    margin-bottom: 16px;
+  }
+  .preview-area.show { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Loading State */
+  .preview-loading {
+    text-align: center;
+    padding: 28px 20px;
+    color: #888;
+    font-weight: 700;
+    font-size: 13px;
+    display: none;
+  }
+  .preview-loading.show { display: block; }
+  .spinner {
+    width: 38px;
+    height: 38px;
+    border: 3px solid #e0e0ec;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Preview Card */
+  .preview-card { display: none; }
+  .preview-card.show { display: block; }
+
+  .platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f0f8;
+    border-radius: 40px;
+    padding: 5px 14px;
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  /* Preview Thumbnail */
+  .preview-thumb {
+    width: 100%;
+    border-radius: 16px;
+    background: #111;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .thumb-placeholder {
+    font-size: 48px;
+    background: #1e1e2a;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    gap: 8px;
+  }
+  .thumb-placeholder-text {
+    font-size: 13px;
+    color: #888;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+  }
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  .preview-thumb:hover .play-overlay { opacity: 0.85; }
+  .play-circle {
+    width: 54px;
+    height: 54px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  /* ── Open in Player Button ── */
+  .open-player-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: linear-gradient(135deg, #1e1e2a, #2d2d40);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .open-player-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.28); }
+  .open-player-btn:active { transform: scale(0.98); }
+  .open-player-btn .player-icon {
+    font-size: 16px;
+  }
+  .open-player-btn .player-label { flex: 1; text-align: left; }
+  .open-player-btn .player-badge {
+    font-size: 10px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 6px;
+    padding: 2px 8px;
+    opacity: 0.9;
+  }
+
+  /* Embedded Player */
+  .video-player-wrapper {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #000;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .video-player-wrapper.show { display: block; }
+  .video-player-wrapper iframe,
+  .video-player-wrapper video { width: 100%; height: 100%; border: none; }
+
+  .preview-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .preview-meta {
+    font-size: 12px;
+    color: #999;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* Download Buttons */
+  .download-options {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    border-radius: 13px;
+    padding: 12px 16px;
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .download-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+  .download-btn:active { transform: scale(0.98); }
+  .dl-left { display: flex; align-items: center; gap: 6px; }
+  .dl-size {
+    font-size: 11px;
+    opacity: 0.8;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 2px 8px;
+  }
+
+  /* Secondary (fallback) download buttons */
+  .download-btn.dl-secondary {
+    background: linear-gradient(135deg, #4b5563, #374151);
+    box-shadow: none;
+  }
+  .download-btn.dl-secondary:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.22); }
+
+  /* Cobalt universal button */
+  .download-btn.dl-cobalt {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    margin-top: 2px;
+  }
+  .download-btn.dl-cobalt:hover { box-shadow: 0 6px 18px rgba(124,58,237,0.35); }
+
+  .redirect-hint {
+    font-size: 11px;
+    text-align: center;
+    margin-top: 14px;
+    color: #3b82f6;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* Error Message */
+  .error-msg {
+    text-align: center;
+    padding: 24px 16px;
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 14px;
+    display: none;
+    line-height: 1.5;
+  }
+  .error-msg.show { display: block; }
+
+  /* Supported Platforms */
+  .supported { margin-top: 24px; }
+  .supported h3 {
+    font-size: 13px;
+    font-weight: 800;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .platform-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: white;
+    border-radius: 30px;
+    padding: 7px 15px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chip:hover { background: #eef2ff; color: #2563eb; transform: translateY(-1px); }
+  .chip:active { transform: scale(0.96); }
+
+  .info-note {
+    background: #fff8e1;
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 12px;
+    color: #7a5c00;
+    font-weight: 600;
+    margin-top: 20px;
+    border-left: 3px solid #d4a017;
+    line-height: 1.6;
+  }
+
+  /* Colourful theme + toast icons (replace emojis) */
+  .theme-opt i { width: 20px; margin-right: 6px; text-align: center; }
+  .theme-opt .fa-sun, #themeBtn .fa-sun { color: #f59e0b !important; }
+  .theme-opt .fa-moon, #themeBtn .fa-moon { color: #8b7cf6 !important; }
+  .theme-opt .fa-cloud-rain, #themeBtn .fa-cloud-rain { color: #3b9cf0 !important; }
+  .theme-opt .fa-snowflake, #themeBtn .fa-snowflake { color: #38bdf8 !important; }
+  .theme-opt .fa-umbrella-beach, #themeBtn .fa-umbrella-beach { color: #f97316 !important; }
+  .toast i { margin-right: 8px; }
+  .toast .fa-cloud-rain { color: #5bb0ff; }
+  .toast .fa-snowflake { color: #7dd3fc; }
+  .toast .fa-umbrella-beach { color: #fb923c; }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1e1e2a;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    z-index: 9999;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  
+/* ===== FULL DARK MODE TEXT FIX ===== */
+
+body.dark-mode,
+body.dark-mode .app{
+  color:#ffffff !important;
+}
+
+/* ALL TEXT WHITE */
+body.dark-mode .logo,
+body.dark-mode .section-title,
+body.dark-mode .section-sub,
+body.dark-mode .preview-title,
+body.dark-mode .preview-meta,
+body.dark-mode .cat-label,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode div,
+body.dark-mode label,
+body.dark-mode a{
+  color:#ffffff !important;
+}
+
+/* INPUT BOX */
+body.dark-mode .input-box{
+  background:#232332 !important;
+}
+
+body.dark-mode .input-box input{
+  color:#ffffff !important;
+}
+
+body.dark-mode .input-box input::placeholder{
+  color:#bbbbbb !important;
+}
+
+/* WHITE CARDS */
+body.dark-mode .categories-wrapper,
+body.dark-mode .preview-area,
+body.dark-mode .platform-badge,
+body.dark-mode .chip,
+body.dark-mode .info-note{
+  background:#1f1f2b !important;
+  color:#ffffff !important;
+}
+
+/* BUTTONS */
+body.dark-mode .paste-btn{
+  background:#2d2d40 !important;
+  color:#ffffff !important;
+}
+
+body.dark-mode .chip{
+  color:#ffffff !important;
+}
+
+/* LINKS */
+body.dark-mode a{
+  color:#66b3ff !important;
+}
+
+
+    .download-btn .dl-left svg { flex: 0 0 auto; }
+
+
+  .fa-solid, .fa-regular, .fa-brands { line-height: 1; }
+  .paste-btn i, .preview-btn i, .chip i, .info-note i { margin-right: 4px; }
+  .platform-badge i { font-size: 16px; }
+  .player-icon i { font-size: 16px; }
+
+  /* ===== COLORFUL WEB ICONS ===== */
+  #platformIcon .fa-instagram, .chip .fa-instagram { color: #e1306c !important; }
+  #platformIcon .fa-youtube, .chip .fa-youtube { color: #ff0000 !important; }
+  #platformIcon .fa-facebook, .chip .fa-facebook { color: #1877f2 !important; }
+  #platformIcon .fa-tiktok, .chip .fa-tiktok { color: #111111 !important; }
+  #platformIcon .fa-x-twitter, .chip .fa-x-twitter { color: #111111 !important; }
+  #platformIcon .fa-pinterest, .chip .fa-pinterest { color: #e60023 !important; }
+  #platformIcon .fa-snapchat, .chip .fa-snapchat { color: #f5c400 !important; }
+  #platformIcon .fa-reddit, .chip .fa-reddit { color: #ff4500 !important; }
+  #platformIcon .fa-music { color: #2a7c5a !important; }
+  .chip .fa-bolt { color: #f59e0b !important; }
+  .paste-btn i { color: #555 !important; }
+  .preview-btn i { color: #fff !important; }
+  .share-btn i, .night-toggle i { color: #555 !important; font-size: 18px; }
+  body.dark-mode .share-btn i { color: #fff !important; }
+  body.dark-mode .night-toggle i { color: #ffd43b !important; }
+  .night-toggle { visibility: visible !important; opacity: 1 !important; }
+
+  body.dark-mode #platformIcon .fa-instagram,
+  body.dark-mode .chip .fa-instagram { color: #e1306c !important; }
+  body.dark-mode #platformIcon .fa-youtube,
+  body.dark-mode .chip .fa-youtube { color: #ff4d4d !important; }
+  body.dark-mode #platformIcon .fa-facebook,
+  body.dark-mode .chip .fa-facebook { color: #4d9cff !important; }
+  body.dark-mode #platformIcon .fa-pinterest,
+  body.dark-mode .chip .fa-pinterest { color: #ff4b67 !important; }
+  body.dark-mode #platformIcon .fa-snapchat,
+  body.dark-mode .chip .fa-snapchat { color: #ffd43b !important; }
+  body.dark-mode #platformIcon .fa-reddit,
+  body.dark-mode .chip .fa-reddit { color: #ff7043 !important; }
+
+/* ===== FIXED TOP BUTTONS ===== */
+.share-btn,
+.night-toggle {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background: #ffffff !important;
+  color: #333333 !important;
+  box-shadow: 0 5px 18px rgba(0,0,0,.12) !important;
+}
+
+.share-btn i {
+  color: #333333 !important;
+  font-size: 19px !important;
+}
+
+.night-toggle i {
+  color: #4b5563 !important;
+  font-size: 19px !important;
+}
+
+.share-btn:hover,
+.night-toggle:hover {
+  transform: scale(1.07);
+  background: #ffffff !important;
+}
+
+body.dark-mode .share-btn,
+body.dark-mode .night-toggle {
+  background: #29293a !important;
+  color: #ffffff !important;
+  box-shadow: 0 5px 18px rgba(0,0,0,.28) !important;
+}
+
+body.dark-mode .share-btn i {
+  color: #ffffff !important;
+}
+
+body.dark-mode .night-toggle i {
+  color: #ffd43b !important;
+}
+
+
+  .app { position: relative; z-index: 1; }
+  .theme-wrap { position: relative; }
+  .theme-menu { display: none; position: absolute; right: 0; top: 52px; z-index: 50; background: #fff; border-radius: 14px; padding: 6px; min-width: 130px; box-shadow: 0 8px 28px rgba(0,0,0,.2); }
+  .theme-menu.show { display: block; }
+  .theme-opt { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 10px 12px; border-radius: 10px; font: 800 13px 'Nunito', sans-serif; color: #333; cursor: pointer; }
+  .theme-opt:hover, .theme-opt.active { background: #eef2ff; }
+  body.dark-mode .theme-menu { background: #232332; }
+  body.dark-mode .theme-opt { color: #fff !important; }
+  body.dark-mode .theme-opt:hover, body.dark-mode .theme-opt.active { background: #34344a; }
+  .auto-dl { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #666; margin: -6px 4px 16px; cursor: pointer; }
+  /* ===== RAIN THEME ===== */
+  #rainCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; display: none; }
+  body.rain-mode #rainCanvas { display: block; }
+  body.rain-mode { background: linear-gradient(180deg,#0b1622 0%,#14283a 55%,#1d3b52 100%) !important; }
+  body.rain-mode .app { background: rgba(10,22,34,.35) !important; }
+  body.rain-mode .categories-wrapper, body.rain-mode .preview-area, body.rain-mode .chip,
+  body.rain-mode .info-note, body.rain-mode .platform-badge, body.rain-mode .input-box {
+    background: rgba(20,40,58,.62) !important; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(125,211,252,.15); }
+  body.rain-mode .paste-btn { background: rgba(125,211,252,.15) !important; }
+  body.rain-mode .preview-btn, body.rain-mode .download-btn { background: linear-gradient(135deg,#0ea5e9,#0369a1) !important; }
+  body.rain-mode .download-btn.dl-secondary { background: linear-gradient(135deg,#334155,#1e293b) !important; }
+  body.rain-mode .logo span, body.rain-mode .night-toggle i { color: #7dd3fc !important; }
+  body.rain-mode .theme-menu { background: #14283a; }
+
+  /* ===== NEW: HELP + SEASON BUTTONS ===== */
+  .help-btn, .season-btn { width:46px!important; height:46px!important; min-width:46px!important; min-height:46px!important; padding:0!important; border:0!important; border-radius:50%!important; display:flex!important; align-items:center!important; justify-content:center!important; cursor:pointer; background:#fff!important; box-shadow:0 5px 18px rgba(0,0,0,.12)!important; transition:.25s; }
+  .help-btn i, .season-btn i { color:#4b5563!important; font-size:19px!important; }
+  .help-btn:hover, .season-btn:hover { transform:scale(1.07); }
+  body.dark-mode .help-btn, body.dark-mode .season-btn { background:#29293a!important; }
+  body.dark-mode .help-btn i { color:#fff!important; }
+  body.dark-mode .season-btn i { color:#9bd6ff!important; }
+  body.rain-mode .help-btn, body.rain-mode .season-btn { background:rgba(20,40,58,.8)!important; }
+  body.rain-mode .help-btn i, body.rain-mode .season-btn i { color:#7dd3fc!important; }
+  .top-buttons { gap:8px; }
+  @media (max-width:430px) {
+    .share-btn,.night-toggle,.help-btn,.season-btn { width:40px!important; height:40px!important; min-width:40px!important; min-height:40px!important; }
+    .top-buttons { gap:6px; }
+  }
+
+  /* ===== NEW: WINTER THEME (frosted twilight + snowfall) ===== */
+  #snowCanvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; display:none; }
+  body.winter-mode #snowCanvas { display:block; }
+  body.winter-mode { background:linear-gradient(180deg,#121e3a 0%,#22406a 58%,#5f8fc2 100%)!important; --sheet-bg:#1b3354; --sheet-text:#eaf4ff; --sheet-muted:#a9c6e6; --sheet-line:rgba(255,255,255,.18); --sheet-accent:#7cc4ff; }
+  body.winter-mode .app { background:transparent!important; }
+  body.winter-mode .logo, body.winter-mode .section-title, body.winter-mode .preview-title,
+  body.winter-mode .cat-item.active .cat-label, body.winter-mode .chip, body.winter-mode .platform-badge,
+  body.winter-mode .info-note, body.winter-mode .input-box input { color:#eaf4ff!important; }
+  body.winter-mode .section-sub, body.winter-mode .preview-meta, body.winter-mode .cat-label,
+  body.winter-mode .supported h3, body.winter-mode .auto-dl, body.winter-mode .preview-loading { color:#a9c6e6!important; }
+  body.winter-mode .input-box input::placeholder { color:#8fb0d4; }
+  body.winter-mode .logo span { color:#9bd6ff!important; }
+  body.winter-mode .categories-wrapper, body.winter-mode .preview-area, body.winter-mode .chip,
+  body.winter-mode .info-note, body.winter-mode .platform-badge, body.winter-mode .input-box {
+    background:rgba(255,255,255,.11)!important; border:1px solid rgba(255,255,255,.24);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:0 8px 28px rgba(8,18,40,.28); }
+  body.winter-mode .info-note { border-left:3px solid #9bd6ff; }
+  body.winter-mode .info-note a { color:#9bd6ff!important; }
+  body.winter-mode .chip:hover { background:rgba(255,255,255,.2)!important; color:#fff!important; }
+  body.winter-mode .paste-btn { background:rgba(255,255,255,.16)!important; color:#eaf4ff!important; }
+  body.winter-mode .paste-btn i { color:#eaf4ff!important; }
+  body.winter-mode .paste-btn:hover { background:rgba(255,255,255,.26)!important; }
+  body.winter-mode .preview-btn, body.winter-mode .download-btn { background:linear-gradient(135deg,#6fbcf5,#2f7fd1)!important; color:#fff!important; box-shadow:0 4px 14px rgba(20,60,120,.4); }
+  body.winter-mode .download-btn.dl-secondary { background:linear-gradient(135deg,#4a6a92,#34506f)!important; }
+  body.winter-mode .open-player-btn { background:linear-gradient(135deg,#0f1c36,#1e3558); }
+  body.winter-mode .spinner { border-color:rgba(255,255,255,.25); border-top-color:#9bd6ff; }
+  body.winter-mode .redirect-hint { color:#9bd6ff; }
+  body.winter-mode .error-msg { color:#ffb9b9; }
+  body.winter-mode .share-btn, body.winter-mode .night-toggle, body.winter-mode .help-btn, body.winter-mode .season-btn { background:rgba(255,255,255,.16)!important; box-shadow:0 5px 18px rgba(8,18,40,.35)!important; }
+  body.winter-mode .share-btn i, body.winter-mode .night-toggle i, body.winter-mode .help-btn i, body.winter-mode .season-btn i { color:#eaf4ff!important; }
+  body.winter-mode .chip .fa-tiktok, body.winter-mode .chip .fa-x-twitter,
+  body.winter-mode #platformIcon .fa-tiktok, body.winter-mode #platformIcon .fa-x-twitter { color:#fff!important; }
+  body.winter-mode .theme-menu { background:#1b3354; }
+  body.winter-mode .theme-opt { color:#eaf4ff; }
+  body.winter-mode .theme-opt:hover, body.winter-mode .theme-opt.active { background:rgba(255,255,255,.14); }
+  body.winter-mode .input-box:focus-within { box-shadow:0 0 0 2px rgba(155,214,255,.55), 0 8px 28px rgba(8,18,40,.3); }
+
+  /* ===== NEW: SUMMER THEME (sunny sky + glowing sun) ===== */
+  body.summer-mode { background:linear-gradient(170deg,#fff2c2 0%,#ffd9a6 48%,#ffbf9c 100%)!important; --sheet-bg:#fffaf0; --sheet-text:#4a2c12; --sheet-muted:#8e6339; --sheet-line:rgba(120,70,20,.18); --sheet-accent:#e8590c; }
+  body.summer-mode::before { content:""; position:fixed; top:-130px; right:-130px; width:400px; height:400px; border-radius:50%; pointer-events:none; z-index:0;
+    background:radial-gradient(circle,#fff7b8 0%,#ffd84f 32%,rgba(255,184,60,.38) 58%,transparent 72%); animation:sunPulse 7s ease-in-out infinite; }
+  @keyframes sunPulse { 0%,100% { transform:scale(1); opacity:.95; } 50% { transform:scale(1.07); opacity:1; } }
+  @media (prefers-reduced-motion: reduce) { body.summer-mode::before { animation:none; } }
+  body.summer-mode .app { background:rgba(255,255,255,.22)!important; }
+  body.summer-mode .logo, body.summer-mode .section-title, body.summer-mode .preview-title,
+  body.summer-mode .cat-item.active .cat-label { color:#4a2c12!important; }
+  body.summer-mode .section-sub, body.summer-mode .preview-meta, body.summer-mode .cat-label,
+  body.summer-mode .supported h3, body.summer-mode .auto-dl { color:#8e6339!important; }
+  body.summer-mode .logo span { color:#ee6a1c!important; }
+  body.summer-mode .categories-wrapper, body.summer-mode .preview-area, body.summer-mode .input-box { background:rgba(255,255,255,.82)!important; border:1px solid rgba(255,255,255,.9); box-shadow:0 8px 26px rgba(200,100,30,.16); }
+  body.summer-mode .chip { background:rgba(255,255,255,.85); color:#6b3f14; box-shadow:0 3px 10px rgba(200,100,30,.14); }
+  body.summer-mode .chip:hover { background:#fff0d9; color:#d9480f; }
+  body.summer-mode .platform-badge { background:#fff0d9; color:#6b3f14; }
+  body.summer-mode .info-note { background:rgba(255,255,255,.78); color:#6b3f14; border-left:3px solid #ff9a3c; }
+  body.summer-mode .paste-btn { background:#fff0d9; color:#8a4a12; }
+  body.summer-mode .paste-btn i { color:#8a4a12!important; }
+  body.summer-mode .paste-btn:hover { background:#ffe2b8; }
+  body.summer-mode .preview-btn, body.summer-mode .download-btn { background:linear-gradient(135deg,#ff9a3c,#ef5a2a)!important; box-shadow:0 4px 14px rgba(239,90,42,.35); }
+  body.summer-mode .preview-btn:hover { box-shadow:0 6px 18px rgba(239,90,42,.45); }
+  body.summer-mode .download-btn.dl-secondary { background:linear-gradient(135deg,#17a5a1,#0c7f87)!important; box-shadow:none; }
+  body.summer-mode .spinner { border-color:#ffe2b8; border-top-color:#ef5a2a; }
+  body.summer-mode .redirect-hint { color:#d9480f; }
+  body.summer-mode .input-box:focus-within { box-shadow:0 0 0 2px rgba(255,154,60,.6), 0 8px 26px rgba(200,100,30,.2); }
+  body.summer-mode .share-btn, body.summer-mode .night-toggle, body.summer-mode .help-btn, body.summer-mode .season-btn { background:rgba(255,255,255,.9)!important; box-shadow:0 5px 18px rgba(200,100,30,.22)!important; }
+  body.summer-mode .share-btn i, body.summer-mode .night-toggle i, body.summer-mode .help-btn i, body.summer-mode .season-btn i { color:#d9480f!important; }
+  body.summer-mode .theme-menu { background:#fffaf0; }
+  body.summer-mode .theme-opt { color:#4a2c12; }
+  body.summer-mode .theme-opt:hover, body.summer-mode .theme-opt.active { background:#ffe9c9; }
+
+  /* ===== NEW: HOW-TO-USE SHEET ===== */
+  body.dark-mode { --sheet-bg:#1f1f2b; --sheet-text:#fff; --sheet-muted:#b8b8c8; --sheet-line:rgba(255,255,255,.14); --sheet-accent:#66b3ff; }
+  body.rain-mode { --sheet-bg:#14283a; --sheet-text:#e6f4ff; --sheet-muted:#9dc3de; --sheet-line:rgba(125,211,252,.2); --sheet-accent:#7dd3fc; }
+  .help-overlay { position:fixed; inset:0; z-index:10000; display:none; align-items:flex-end; justify-content:center; background:rgba(8,12,28,.55); }
+  .help-overlay.show { display:flex; }
+  .help-sheet { width:100%; max-width:540px; max-height:90vh; overflow-y:auto; background:var(--sheet-bg,#fff); border-radius:24px 24px 0 0; padding:22px 20px 26px; animation:sheetUp .28s ease; box-shadow:0 -10px 40px rgba(0,0,0,.25); }
+  @keyframes sheetUp { from { transform:translateY(40px); opacity:0; } to { transform:none; opacity:1; } }
+  @media (min-width:600px) { .help-overlay { align-items:center; } .help-sheet { border-radius:24px; } }
+  .help-overlay .help-sheet * { color:var(--sheet-text,#222)!important; }
+  .help-overlay .help-sheet .hmuted { color:var(--sheet-muted,#666)!important; }
+  .help-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:6px; }
+  .help-top h2 { font-size:22px; font-weight:900; }
+  .help-close { border:0; background:none; font-size:20px; cursor:pointer; width:36px; height:36px; border-radius:50%; flex-shrink:0; }
+  .help-close:hover { background:var(--sheet-line,#eee); }
+  .help-lead { font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; }
+  .help-steps { list-style:none; counter-reset:step; display:flex; flex-direction:column; gap:12px; margin-bottom:18px; }
+  .help-steps li { counter-increment:step; position:relative; padding-left:42px; font-size:13px; font-weight:600; line-height:1.5; }
+  .help-steps li::before { content:counter(step); position:absolute; left:0; top:0; width:30px; height:30px; border-radius:50%; background:var(--sheet-accent,#2563eb); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; color:#fff; }
+  .help-steps li strong { display:block; font-size:14px; font-weight:800; }
+  .help-sheet h3 { font-size:14px; font-weight:800; margin:16px 0 6px; padding-top:14px; border-top:1px solid var(--sheet-line,#eee); }
+  .help-sheet p, .help-sheet ul { font-size:13px; font-weight:600; line-height:1.55; }
+  .help-sheet ul { padding-left:18px; }
+  .help-sheet li { margin-bottom:4px; }
+  .help-done { width:100%; margin-top:18px; border:0; border-radius:13px; padding:12px; font:800 14px 'Nunito',sans-serif; cursor:pointer; background:var(--sheet-accent,#2563eb); }
+  .help-overlay .help-sheet .help-done { color:#fff!important; }
+  body.winter-mode .help-overlay .help-sheet .help-done { color:#10213d!important; }
+
+  /* ===== FRONT TEXT + TIPS ===== */
+  .welcome { margin:-8px 4px 18px; }
+  .welcome .welcome-title { font-size:17px; font-weight:900; color:var(--sheet-text,#2b2b3a); line-height:1.3; }
+  .welcome .welcome-sub { font-size:13px; font-weight:600; color:var(--sheet-muted,#777); margin-top:3px; line-height:1.5; }
+  body.winter-mode .welcome .welcome-title { color:#eaf4ff!important; }
+  body.winter-mode .welcome .welcome-sub { color:#a9c6e6!important; }
+  body.summer-mode .welcome .welcome-title { color:#4a2c12!important; }
+  body.summer-mode .welcome .welcome-sub { color:#8e6339!important; }
+  .tips-list { margin:8px 0 0; padding-left:18px; }
+  .tips-list li { margin-bottom:5px; }
+</style>
+</head>
+<body>
+<canvas id="rainCanvas" aria-hidden="true"></canvas>
+<canvas id="snowCanvas" aria-hidden="true"></canvas>
+<div class="app">
+
+  <!-- Header -->
+<div class="header">
+  <!-- Merged Logo and Home Button -->
+  <div class="logo" onclick="goHome()" title="Home">Any<span>Thing</span></div>
+
+  <!-- RIGHT SIDE BUTTONS -->
+  <div class="top-buttons">
+
+    <!-- HOW TO USE -->
+    <button class="help-btn" type="button" onclick="openHelp()" title="How to use" aria-label="How to use">
+      <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+    </button>
+
+    <!-- SHARE -->
+    <button class="share-btn" onclick="shareApp()" title="Share">
+      <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+    </button>
+
+    <!-- NIGHT MODE -->
+    <div class="theme-wrap">
+      <button class="night-toggle" id="themeBtn" onclick="toggleThemeMenu(event)" title="Theme"><i class="fa-solid fa-moon" aria-hidden="true"></i></button>
+      <div class="theme-menu" id="themeMenu">
+        <button class="theme-opt" data-t="light" onclick="setTheme('light')"><i class="fa-solid fa-sun" aria-hidden="true"></i> Light</button>
+        <button class="theme-opt" data-t="dark" onclick="setTheme('dark')"><i class="fa-solid fa-moon" aria-hidden="true"></i> Dark</button>
+        <button class="theme-opt" data-t="rain" onclick="setTheme('rain')"><i class="fa-solid fa-cloud-rain" aria-hidden="true"></i> Rain</button>
+        <button class="theme-opt" data-t="winter" onclick="setTheme('winter')"><i class="fa-solid fa-snowflake" aria-hidden="true"></i> Winter</button>
+        <button class="theme-opt" data-t="summer" onclick="setTheme('summer')"><i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i> Summer</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+/* RIGHT BUTTON GROUP */
+.top-buttons{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* ALL TOP BUTTONS SAME STYLE */
+.share-btn,
+.night-toggle{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#f0f0f8;
+  color:#333;
+  font-size:18px;
+  cursor:pointer;
+  transition:0.25s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* HOVER */
+.share-btn:hover,
+.night-toggle:hover{
+  transform:scale(1.08);
+  background:#e4e4f0;
+}
+
+/* DARK MODE */
+body.dark-mode{
+  background:linear-gradient(160deg,#0f0f14 0%,#1a1a24 100%);
+  color:white;
+}
+
+body.dark-mode .app{
+  background:linear-gradient(180deg,#1b1b26 0%,#111118 100%);
+}
+
+body.dark-mode .share-btn,
+body.dark-mode .night-toggle{
+  background:#2b2b3c;
+  color:white;
+}
+
+</style>
+
+
+
+  <div class="welcome">
+    <p class="welcome-title">Save any video, reel or song</p>
+    <p class="welcome-sub">Paste a link, tap Preview, then download. No sign-up needed.</p>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="categories-wrapper">
+    <div class="categories" id="categoriesRow">
+      <div class="cat-item active" data-cat="reels" data-title="Instagram Reels" data-sub="Download reels video fast &amp; free" data-platform="instagram" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-reels">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c0602a" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><polygon points="10,8 17,12 10,16" fill="#c0602a" stroke="none"/></svg>
+        </div>
+        <span class="cat-label">Reels</span>
+      </div>
+      <div class="cat-item" data-cat="video" data-title="Video Download" data-sub="Download any video fast &amp; free" data-platform="youtube" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8"><rect x="2" y="6" width="15" height="12" rx="3"/><polygon points="17,9 22,6 22,18 17,15" fill="#7c3aed" stroke="none"/></svg>
+        </div>
+        <span class="cat-label">Video</span>
+      </div>
+      <div class="cat-item" data-cat="audio" data-title="Audio Download" data-sub="Download audio &amp; music free" data-platform="sound" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-audio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2a7c5a" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <span class="cat-label">Audio</span>
+      </div>
+      <div class="cat-item" data-cat="photo" data-title="Photo Download" data-sub="Download photos fast &amp; free" data-platform="pinterest" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2a5a9c" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5" fill="#2a5a9c"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <span class="cat-label">Photo</span>
+      </div>
+      <div class="cat-item" data-cat="stories" data-title="Stories Download" data-sub="Download stories fast &amp; free" data-platform="instagram" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-stories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c07020" stroke-width="1.8"><circle cx="12" cy="12" r="8" stroke-dasharray="3 2"/><polygon points="10,9 16,12 10,15" fill="#c07020" stroke="none"/></svg>
+        </div>
+        <span class="cat-label">Stories</span>
+      </div>
+      <div class="cat-item" data-cat="fb" data-title="Facebook Video" data-sub="Download FB videos fast &amp; free" data-platform="facebook" onclick="handleCatClick(this)">
+        <div class="cat-icon cat-fb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3b4fc0" stroke-width="1.8"><rect x="3" y="6" width="14" height="12" rx="2.5"/><polygon points="17,9 21,7 21,17 17,15" fill="#3b4fc0" stroke="none"/></svg>
+        </div>
+        <span class="cat-label">FB Video</span>
+      </div>
+      <div class="cat-item" data-cat="shorts" data-title="YouTube Shorts" data-sub="Download Shorts &amp; TikTok free" data-platform="youtube" onclick="handleCatClick(this)">
+        <div class="cat-icon" style="background:linear-gradient(135deg,#ffe0e0,#ffb8b8);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c0202a" stroke-width="1.8"><path d="M10 8v8l6-4-6-4z" fill="#c0202a" stroke="none"/><rect x="2" y="4" width="20" height="16" rx="4" stroke="#c0202a"/></svg>
+        </div>
+        <span class="cat-label">Shorts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="section-title" id="sectionTitle">Instagram Reels</div>
+    <div class="section-sub" id="sectionSub">Download reels video fast &amp; free</div>
+
+    <!-- URL Input -->
+    <div class="input-box">
+      <input type="url" id="linkInput" placeholder="Paste link here... (Instagram, YouTube, FB...)" autocomplete="off" autocorrect="off" spellcheck="false" />
+      <button class="paste-btn" onclick="pasteLink()"><i class="fa-regular fa-clipboard" aria-hidden="true"></i> Paste</button>
+      <button class="preview-btn" id="previewBtn" onclick="previewLink()"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Preview</button>
+    </div>
+
+    <label class="auto-dl"><input type="checkbox" id="autoDl"> Start download automatically after Preview</label>
+
+    <!-- Preview Box -->
+    <div class="preview-area" id="previewArea">
+
+      <!-- Loading Spinner -->
+      <div class="preview-loading" id="previewLoading">
+        <div class="spinner"></div>
+        Fetching media info...
+      </div>
+
+      <!-- Preview Card -->
+      <div class="preview-card" id="previewCard">
+        <div class="platform-badge" id="platformBadge">
+          <span id="platformIcon"><i class="fa-brands fa-instagram" aria-hidden="true"></i></span>
+          <span id="platformName">Instagram</span>
+        </div>
+
+        <!-- Embedded Player (for YouTube) -->
+        <div class="video-player-wrapper" id="videoPlayerWrapper"></div>
+
+        <!-- Thumbnail / Preview -->
+        <div class="preview-thumb" id="previewThumb" onclick="playVideoIfNeeded()">
+          <div class="thumb-placeholder" id="thumbPlaceholder">
+            <span><i class="fa-solid fa-clapperboard" aria-hidden="true"></i></span>
+            <span class="thumb-placeholder-text">Tap to Preview</span>
+          </div>
+          <img id="thumbImg" alt="preview" />
+          <div class="play-overlay" id="playOverlay">
+            <div class="play-circle"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+          </div>
+        </div>
+
+        <!-- Open in Chrome Media Player Button -->
+        <button class="open-player-btn" id="openPlayerBtn" onclick="openInChromePlayer()">
+          <span class="player-icon"></span>
+          <span class="player-label">Open in Media Player</span>
+          <span class="player-badge">Chrome Player</span>
+        </button>
+
+        <div class="preview-title" id="previewTitle">Media Ready</div>
+        <div class="preview-meta" id="previewMeta"></div>
+        <div class="download-options" id="downloadOptions"></div>
+</div>
+
+      <!-- Error -->
+      <div class="error-msg" id="errorMsg">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Invalid or unsupported link.<br>Please paste a valid social media URL.
+      </div>
+    </div>
+
+    <!-- Supported Platforms -->
+    <div class="supported" id="supportedSection">
+      <h3><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Supported Platforms — tap to fill example</h3>
+      <div class="platform-chips">
+        <div class="chip" onclick="fillExample('instagram')"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram</div>
+        <div class="chip" onclick="fillExample('youtube')"><i class="fa-brands fa-youtube" aria-hidden="true"></i> YouTube</div>
+        <div class="chip" onclick="fillExample('shorts')"><i class="fa-solid fa-bolt" aria-hidden="true"></i> YT Shorts</div>
+        <div class="chip" onclick="fillExample('facebook')"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook</div>
+        <div class="chip" onclick="fillExample('tiktok')"><i class="fa-brands fa-tiktok" aria-hidden="true"></i> TikTok</div>
+        <div class="chip" onclick="fillExample('twitter')"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i> Twitter/X</div>
+        <div class="chip" onclick="fillExample('pinterest')"><i class="fa-brands fa-pinterest" aria-hidden="true"></i> Pinterest</div>
+        <div class="chip" onclick="fillExample('snapchat')"><i class="fa-brands fa-snapchat" aria-hidden="true"></i> Snapchat</div>
+        <div class="chip" onclick="fillExample('reddit')"><i class="fa-brands fa-reddit" aria-hidden="true"></i> Reddit</div>
+      </div>
+    </div>
+
+    <div class="info-note">
+      <i class="fa-regular fa-lightbulb" aria-hidden="true"></i> <strong>How it works:</strong> Paste any social media link → tap <strong>Preview</strong> → use the available <strong>Download</strong> or <strong>Preview</strong> option. Supports Instagram Reels &amp; Stories, YouTube Videos &amp; Shorts, TikTok, Facebook, Twitter/X, Pinterest, Snapchat &amp; Reddit. Fast, free &amp; secure.
+    </div>
+  
+<div class="info-note" style="margin-top:24px;">
+   <strong>Service Contact</strong><br><br>
+  
+   Email: 
+  <a href="mailto:adiadarsh9160@gmail.com" 
+     style="color:#2563eb;text-decoration:none;font-weight:700;">
+     adiadarsh9160@gmail.com
+  </a>
+  
+  <br><br>
+
+   Instagram: 
+  <a href="https://instagram.com/_adarsh.exe" 
+     target="_blank"
+     style="color:#e1306c;text-decoration:none;font-weight:700;">
+     @_adarsh.exe
+  </a>
+</div>
+
+</div>
+</div>
+
+<!-- How to use -->
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)closeHelp()">
+  <div class="help-sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-top">
+      <h2 id="helpTitle">How to use AnyThing</h2>
+      <button class="help-close" type="button" onclick="closeHelp()" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <p class="help-lead hmuted">Save videos, reels, audio and photos from social media in four taps.</p>
+    <ol class="help-steps">
+      <li><strong>Pick a type</strong>Tap Reels, Video, Audio, Photo, Stories, FB Video or Shorts at the top.</li>
+      <li><strong>Paste the link</strong>Copy the post link in the social app, then tap Paste. You can also paste into the box yourself.</li>
+      <li><strong>Tap Preview</strong>Wait a moment while the media details load.</li>
+      <li><strong>Download</strong>Tap a format button to save it. Turn on &ldquo;Start download automatically&rdquo; to skip this tap next time.</li>
+    </ol>
+    <h3>Change the look</h3>
+    <ul>
+      <li>Tap the round theme button to choose Light, Dark, Rain, Winter or Summer.</li>
+      <li>Your theme is remembered the next time you visit.</li>
+    </ul>
+    <h3>If something doesn&rsquo;t work</h3>
+    <ul>
+      <li>Refresh the page and try the link again.</li>
+      <li>Private or deleted posts can&rsquo;t be fetched. Try a public link.</li>
+      <li>Use the full link from the app&rsquo;s Share menu.</li>
+    </ul>
+    <h3>Good to know</h3>
+    <p class="hmuted">Only download content you own or have permission to save.</p>
+    <button class="help-done" type="button" onclick="closeHelp()">Got it</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ========== STATE ========== */
+  // Same origin when served by backed.py, otherwise talk to the backend on port 5000
+  const API = location.port === '5000' ? '' : (() => {
+    const host = location.hostname || '127.0.0.1';
+    const safeHost = host.includes(':') && !host.startsWith('[') ? `[${host}]` : host;
+    return `${location.protocol === 'https:' ? 'https' : 'http'}://${safeHost}:5000`;
+  })();
+  const DL_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v11m0 0 4.5-4.5M12 14 7.5 9.5M5 20h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  let currentCategory = 'reels';
+  let lastUrl = '';
+  let lastPlatform = null;
+
+  const platformIcons = {
+    instagram: '<i class="fa-brands fa-instagram" aria-hidden="true"></i>',
+    youtube: '<i class="fa-brands fa-youtube" aria-hidden="true"></i>',
+    facebook: '<i class="fa-brands fa-facebook" aria-hidden="true"></i>',
+    tiktok: '<i class="fa-brands fa-tiktok" aria-hidden="true"></i>',
+    twitter: '<i class="fa-brands fa-x-twitter" aria-hidden="true"></i>',
+    pinterest: '<i class="fa-brands fa-pinterest" aria-hidden="true"></i>',
+    sound: '<i class="fa-solid fa-music" aria-hidden="true"></i>',
+    snapchat: '<i class="fa-brands fa-snapchat" aria-hidden="true"></i>',
+    reddit: '<i class="fa-brands fa-reddit" aria-hidden="true"></i>'
+  };
+
+  const exampleUrls = {
+    instagram: 'https://www.instagram.com/reel/example123/',
+    youtube:   'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    shorts:    'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+    facebook:  'https://www.facebook.com/watch/?v=123456789',
+    tiktok:    'https://www.tiktok.com/@user/video/123456',
+    twitter:   'https://twitter.com/i/status/123456789',
+    pinterest: 'https://www.pinterest.com/pin/123456789/',
+    snapchat:  'https://www.snapchat.com/spotlight/example',
+    reddit:    'https://www.reddit.com/r/videos/comments/example/'
+  };
+
+  /* ========== CATEGORY CLICK ========== */
+  function handleCatClick(el) {
+    document.querySelectorAll('.cat-item').forEach(item => item.classList.remove('active'));
+    el.classList.add('active');
+
+    currentCategory = el.dataset.cat || 'reels';
+    document.getElementById('sectionTitle').textContent = el.dataset.title || 'Media Download';
+    document.getElementById('sectionSub').textContent = el.dataset.sub || 'Download media fast & free';
+
+    document.getElementById('linkInput').value = '';
+    resetPreview();
+  }
+
+  async function pasteLink() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        document.getElementById('linkInput').value = text.trim();
+        showToast('Link pasted');
+      } else {
+        showToast('Clipboard is empty');
+      }
+    } catch (e) {
+      showToast('Allow clipboard permission');
+    }
+  }
+
+  async function previewLink() {
+    const input = document.getElementById('linkInput');
+    const url = input.value.trim();
+
+    if (!url) {
+      showToast('Paste a link first');
+      input.focus();
+      return;
+    }
+
+    if (!/^https?:\/\//i.test(url)) {
+      showError('Please enter a valid http/https URL.');
+      return;
+    }
+
+    lastUrl = url;
+
+    const area = document.getElementById('previewArea');
+    const loading = document.getElementById('previewLoading');
+    const card = document.getElementById('previewCard');
+    const error = document.getElementById('errorMsg');
+    const btn = document.getElementById('previewBtn');
+
+    area.classList.add('show');
+    loading.classList.add('show');
+    card.classList.remove('show');
+    error.classList.remove('show');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Loading';
+
+    try {
+      const response = await fetch(API + '/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success || !data.formats || !data.formats.length) {
+        throw new Error(data.error || 'Backend could not extract this media.');
+      }
+
+      showResult(data);
+} catch (err) {
+      console.error(err);
+      showError(
+        ' Could not extract media.<br>' +
+        'Open this app at http://127.0.0.1:5000 and confirm the backend is running.<br><br>' +
+        '<small>' + escapeHtml(err.message || 'Unknown error') + '</small>'
+      );
+    } finally {
+      loading.classList.remove('show');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Preview';
+    }
+  }
+  function showResult(data) {
+    const card = document.getElementById('previewCard');
+    const thumb = document.getElementById('thumbImg');
+    const placeholder = document.getElementById('thumbPlaceholder');
+    const platformName = document.getElementById('platformName');
+    const platformIcon = document.getElementById('platformIcon');
+    const title = document.getElementById('previewTitle');
+    const meta = document.getElementById('previewMeta');
+    const options = document.getElementById('downloadOptions');
+
+    const platform = detectPlatform(lastUrl);
+    lastPlatform = platform;
+
+    platformIcon.innerHTML = platformIcons[platform] || '<i class="fa-solid fa-clapperboard" aria-hidden="true"></i>';
+    platformName.textContent = platformLabel(platform);
+
+    title.textContent = data.title || 'Media Ready';
+    meta.textContent = [data.platform, data.uploader, data.duration ? fmtDuration(data.duration) : ''].filter(Boolean).join(' \u2022 ') || 'Ready to download';
+
+    if (data.thumbnail) {
+      thumb.src = data.thumbnail;
+      thumb.style.display = 'block';
+      placeholder.style.display = 'none';
+      thumb.onerror = () => {
+        thumb.style.display = 'none';
+        placeholder.style.display = 'flex';
+      };
+    } else {
+      thumb.removeAttribute('src');
+      thumb.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+
+    const fmts = data.formats.slice();
+    if (currentCategory === 'audio') fmts.sort((a, b) => (b.type === 'audio') - (a.type === 'audio'));
+    options.innerHTML = fmts.map((f, i) => `
+      <button class="download-btn${i ? ' dl-secondary' : ''}" type="button" data-fid="${escapeAttr(f.id)}">
+        <span class="dl-left">${DL_ICON}${escapeHtml(f.label)}</span>
+        <span class="dl-size">${escapeHtml(String(f.ext).toUpperCase() + (f.size ? ' \u2022 ' + fmtSize(f.size) : ''))}</span>
+      </button>`).join('');
+    options.querySelectorAll('[data-fid]').forEach(b => b.onclick = () => startDownload(b.dataset.fid));
+    const pv = fmts.find(f => f.kind === 'direct');
+    document.getElementById('openPlayerBtn').dataset.url = pv ? downloadUrl(lastUrl, pv.id, true) : '';
+    if (document.getElementById('autoDl').checked) startDownload(fmts[0].id);
+    card.classList.add('show');
+  }
+
+  function playVideoIfNeeded() {
+    const url = document.getElementById('openPlayerBtn').dataset.url;
+    if (url) openMedia(url);
+  }
+
+  function openInChromePlayer() {
+    const url = document.getElementById('openPlayerBtn').dataset.url;
+    if (!url) {
+      showToast('Preview media first');
+      return;
+    }
+    openMedia(url);
+  }
+
+  function downloadUrl(url, fid, inline) {
+    return API + '/api/download?url=' + encodeURIComponent(url) + '&format=' + encodeURIComponent(fid) + (inline ? '&inline=1' : '');
+  }
+
+  // Navigating to an attachment response starts the browser download immediately; the page stays open.
+  function startDownload(fid) {
+    const a = document.createElement('a');
+    a.href = downloadUrl(lastUrl, fid);
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showToast(String(fid).startsWith('srv:') ? 'Preparing file... download starts when ready' : 'Download started');
+  }
+
+  function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+  function fmtDuration(s) { s = Math.round(s); const m = Math.floor(s / 60); return m + ':' + String(s % 60).padStart(2, '0'); }
+
+  function openMedia(url) {
+    if (!url) { showToast('Preview not available for this media'); return; }
+    const wrapper = document.getElementById('videoPlayerWrapper');
+    wrapper.innerHTML = '';
+
+    const video = document.createElement('video');
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.src = url;
+
+    wrapper.appendChild(video);
+    wrapper.classList.add('show');
+    document.getElementById('previewThumb').style.display = 'none';
+    document.getElementById('openPlayerBtn').style.display = 'none';
+
+    video.play().catch(() => {});
+  }
+
+  function resetPreview() {
+    document.getElementById('previewArea').classList.remove('show');
+    document.getElementById('previewLoading').classList.remove('show');
+    document.getElementById('previewCard').classList.remove('show');
+    document.getElementById('errorMsg').classList.remove('show');
+    document.getElementById('videoPlayerWrapper').classList.remove('show');
+    document.getElementById('videoPlayerWrapper').innerHTML = '';
+    document.getElementById('previewThumb').style.display = '';
+    document.getElementById('openPlayerBtn').style.display = '';
+    document.getElementById('openPlayerBtn').dataset.url = '';
+    document.getElementById('downloadOptions').innerHTML = '';
+  }
+
+  function showError(message) {
+    const area = document.getElementById('previewArea');
+    document.getElementById('previewLoading').classList.remove('show');
+    document.getElementById('previewCard').classList.remove('show');
+    const error = document.getElementById('errorMsg');
+    error.innerHTML = message;
+    error.classList.add('show');
+    area.classList.add('show');
+  }
+
+  function detectPlatform(url) {
+    const u = url.toLowerCase();
+    if (u.includes('instagram.com')) return 'instagram';
+    if (u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
+    if (u.includes('facebook.com') || u.includes('fb.watch')) return 'facebook';
+    if (u.includes('tiktok.com')) return 'tiktok';
+    if (u.includes('twitter.com') || u.includes('x.com')) return 'twitter';
+    if (u.includes('pinterest.')) return 'pinterest';
+    if (u.includes('snapchat.com')) return 'snapchat';
+    if (u.includes('reddit.com')) return 'reddit';
+    return 'sound';
+  }
+
+  function platformLabel(platform) {
+    return {
+      instagram: 'Instagram',
+      youtube: 'YouTube',
+      facebook: 'Facebook',
+      tiktok: 'TikTok',
+      twitter: 'Twitter / X',
+      pinterest: 'Pinterest',
+      snapchat: 'Snapchat',
+      reddit: 'Reddit',
+      sound: 'Media'
+    }[platform] || 'Media';
+  }
+
+  function fillExample(type) {
+    const value = exampleUrls[type] || '';
+    document.getElementById('linkInput').value = value;
+    showToast('Example filled — replace it with a real URL');
+  }
+
+  function goHome() {
+    document.getElementById('linkInput').value = '';
+    resetPreview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function shareApp() {
+    const shareData = {
+      title: 'AnyThing Downloader',
+      text: 'AnyThing — Social Media Downloader'
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(location.href);
+        showToast('Page link copied');
+      }
+    } catch (e) {
+      // User cancelled share.
+    }
+  }
+
+  /* ===== RAIN CANVAS ===== */
+  (function () {
+    const c = document.getElementById('rainCanvas'), x = c.getContext('2d');
+    let drops = [], raf = 0, on = false;
+    const mk = () => ({ x: Math.random() * c.width, y: Math.random() * c.height, l: 10 + Math.random() * 18, v: 9 + Math.random() * 10, o: .2 + Math.random() * .4 });
+    function size() {
+      c.width = innerWidth; c.height = innerHeight;
+      let n = Math.min(220, Math.floor(innerWidth / 5));
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) n = Math.floor(n / 3);
+      drops = Array.from({ length: n }, mk);
+    }
+    function frame() {
+      x.clearRect(0, 0, c.width, c.height);
+      x.lineWidth = 1.2;
+      for (const d of drops) {
+        x.strokeStyle = `rgba(174,214,241,${d.o})`;
+        x.beginPath(); x.moveTo(d.x, d.y); x.lineTo(d.x - d.l * .18, d.y + d.l); x.stroke();
+        d.y += d.v; d.x -= d.v * .18;
+        if (d.y > c.height || d.x < 0) { d.y = -d.l; d.x = Math.random() * (c.width + 80); }
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    window.rainStart = () => { if (on) return; on = true; size(); frame(); };
+    window.rainStop = () => { on = false; cancelAnimationFrame(raf); x.clearRect(0, 0, c.width, c.height); };
+    addEventListener('resize', () => on && size());
+    document.addEventListener('visibilitychange', () => { if (on) { document.hidden ? cancelAnimationFrame(raf) : frame(); } });
+  })();
+
+  /* ===== SNOW CANVAS ===== */
+  (function () {
+    const c = document.getElementById('snowCanvas'), x = c.getContext('2d');
+    let flakes = [], raf = 0, on = false, t = 0;
+    const mk = () => ({ x: Math.random() * c.width, y: Math.random() * c.height, r: 1 + Math.random() * 2.8, v: .5 + Math.random() * 1.2, s: Math.random() * 6.28, o: .45 + Math.random() * .5 });
+    function size() {
+      c.width = innerWidth; c.height = innerHeight;
+      let n = Math.min(130, Math.floor(innerWidth / 9));
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) n = Math.floor(n / 3);
+      flakes = Array.from({ length: n }, mk);
+    }
+    function frame() {
+      x.clearRect(0, 0, c.width, c.height); t += .01;
+      for (const p of flakes) {
+        x.fillStyle = `rgba(255,255,255,${p.o})`;
+        x.beginPath(); x.arc(p.x, p.y, p.r, 0, 6.283); x.fill();
+        p.y += p.v; p.x += Math.sin(t + p.s) * .5;
+        if (p.y > c.height + 5) { p.y = -5; p.x = Math.random() * c.width; }
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    window.snowStart = () => { if (on) return; on = true; size(); frame(); };
+    window.snowStop = () => { on = false; cancelAnimationFrame(raf); x.clearRect(0, 0, c.width, c.height); };
+    addEventListener('resize', () => on && size());
+    document.addEventListener('visibilitychange', () => { if (on) { document.hidden ? cancelAnimationFrame(raf) : frame(); } });
+  })();
+
+  /* ===== THEMES ===== */
+  function setTheme(t) {
+    const b = document.body;
+    const validThemes = ['light', 'dark', 'rain', 'winter', 'summer'];
+    if (!validThemes.includes(t)) t = 'light';
+    b.classList.toggle('dark-mode', t === 'dark');
+    b.classList.toggle('rain-mode', t === 'rain');
+    b.classList.toggle('winter-mode', t === 'winter');
+    b.classList.toggle('summer-mode', t === 'summer');
+    const icon = { light: 'fa-sun', dark: 'fa-moon', rain: 'fa-cloud-rain', winter: 'fa-snowflake', summer: 'fa-umbrella-beach' }[t];
+    document.getElementById('themeBtn').innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i>`;
+    document.querySelectorAll('.theme-opt').forEach(o => o.classList.toggle('active', o.dataset.t === t));
+    t === 'rain' ? window.rainStart() : window.rainStop();
+    t === 'winter' ? window.snowStart() : window.snowStop();
+    try { localStorage.setItem('theme', t); } catch (e) {}
+    document.getElementById('themeMenu').classList.remove('show');
+    if (t === 'rain') showToast('Rain mode', 'fa-cloud-rain');
+    else if (t === 'winter') showToast('Winter theme', 'fa-snowflake');
+    else if (t === 'summer') showToast('Summer theme', 'fa-umbrella-beach');
+  }
+  function openHelp() { document.getElementById('helpOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+  function closeHelp() { document.getElementById('helpOverlay').classList.remove('show'); document.body.style.overflow = ''; }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHelp(); });
+  function toggleThemeMenu(e) { e.stopPropagation(); document.getElementById('themeMenu').classList.toggle('show'); }
+  document.addEventListener('click', () => document.getElementById('themeMenu').classList.remove('show'));
+
+  (function init() {
+    let t = 'light', auto = false;
+    try { t = localStorage.getItem('theme') || 'light'; auto = localStorage.getItem('autoDl') === '1'; } catch (e) {}
+    const box = document.getElementById('autoDl');
+    box.checked = auto;
+    box.addEventListener('change', () => { try { localStorage.setItem('autoDl', box.checked ? '1' : '0'); } catch (e) {} });
+    setTheme(['light', 'dark', 'rain', 'winter', 'summer'].includes(t) ? t : 'light');
+  })();
+
+  function showToast(message, iconClass) {
+    const toast = document.getElementById('toast');
+    toast.textContent = '';
+    if (iconClass) {
+      const i = document.createElement('i');
+      i.className = 'fa-solid ' + iconClass;
+      i.setAttribute('aria-hidden', 'true');
+      toast.appendChild(i);
+    }
+    toast.appendChild(document.createTextNode(message));
+    toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    }[c]));
+  }
+
+  function escapeAttr(value) {
+    return String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function escapeJs(value) {
+    return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
+  document.getElementById('linkInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') previewLink();
+  });
+</script>
+</body>
+</html>
